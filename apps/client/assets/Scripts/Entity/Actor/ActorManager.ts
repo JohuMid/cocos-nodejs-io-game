@@ -2,13 +2,13 @@ import { _decorator, Component, EventTouch, input, Input, log, Node, UITransform
 import DataManager from '../../Global/DataManager';
 import { JoyStickManager } from '../../UI/JoyStickManager';
 import { InputTypeEnum } from '../../Common/Enum';
+import { IActor } from '../../Common';
 const { ccclass, property } = _decorator;
 
 @ccclass('ActorManager')
 export class ActorManager extends Component {
-    
-    onLoad() {
-       
+    init(data:IActor) {
+        
     }
 
     update(dt: number): void {
@@ -26,6 +26,10 @@ export class ActorManager extends Component {
             console.log(DataManager.Instance.state.actors[0].position.x);
             
         }
+    }
+    
+    render(data:IActor) {
+        this.node.setPosition(data.position.x,data.position.y)
     }
 
 }
