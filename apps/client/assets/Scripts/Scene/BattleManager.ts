@@ -1,9 +1,9 @@
-import { _decorator, Component, EventTouch, input, Input, instantiate, log, Node, Prefab, UITransform, Vec2 } from 'cc';
+import { _decorator, Component, EventTouch, input, Input, instantiate, log, Node, Prefab, SpriteFrame, UITransform, Vec2 } from 'cc';
 import DataManager from '../Global/DataManager';
 import { JoyStickManager } from '../UI/JoyStickManager';
 import { ResourceManager } from '../Global/ResourceManager';
 import { ActorManager } from '../Entity/Actor/ActorManager';
-import { PrefabPathEnum } from '../Enum';
+import { PrefabPathEnum, TexturePathEnum } from '../Enum';
 import { EntityTypeEnum } from '../Common';
 const { ccclass, property } = _decorator;
 
@@ -37,6 +37,13 @@ export class BattleManager extends Component {
             list.push(p)
         }
 
+        for (const type in TexturePathEnum) {
+            const p = ResourceManager.Instance.loadDir(TexturePathEnum[type], SpriteFrame).then((spriteFrames) => {
+                DataManager.Instance.textureMap.set(type, spriteFrames)
+            })
+            list.push(p)
+        }
+
         await Promise.all(list)
 
     }
@@ -52,10 +59,22 @@ export class BattleManager extends Component {
             return
         }
         this.render()
+        this.tick(dt)
     }
 
     render() {
         this.renderActor()
+    }
+
+    tick(dt: number) {
+        this.tickActor(dt)
+    }
+
+    tickActor(dt: number) {
+        for (const data of DataManager.Instance.state.actors) {
+            const actor = DataManager.Instance.actorMap.get(data.id)
+            actor.tick(dt)
+        }
     }
 
     async renderActor() {

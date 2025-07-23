@@ -3,7 +3,7 @@ const { ccclass, property } = _decorator;
 
 @ccclass('JoyStickManager')
 export class JoyStickManager extends Component {
-    input:Vec2 = Vec2.ZERO
+    input: Vec2 = Vec2.ZERO
     private body: Node
     private stick: Node
     private defaultPos: Vec2
@@ -21,6 +21,8 @@ export class JoyStickManager extends Component {
 
     onDestroy() {
         input.off(Input.EventType.TOUCH_START, this.onTouchStart, this);
+        input.off(Input.EventType.TOUCH_END, this.onTouchEnd, this);
+        input.off(Input.EventType.TOUCH_MOVE, this.onTouchMove, this);
     }
 
     onTouchStart(event: EventTouch) {
@@ -32,7 +34,7 @@ export class JoyStickManager extends Component {
         this.body.setPosition(this.defaultPos.x, this.defaultPos.y)
         this.stick.setPosition(0, 0)
         this.input = Vec2.ZERO
-        
+
     }
 
     onTouchMove(event: EventTouch) {
