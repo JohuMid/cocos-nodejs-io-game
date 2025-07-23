@@ -11,8 +11,11 @@ const { ccclass, property } = _decorator;
 
 @ccclass('ActorManager')
 export class ActorManager extends EntityManager {
+    buttleType:EntityTypeEnum
+
     private wm: WeaponManager
     init(data: IActor) {
+        this.buttleType = data.buttleType
         this.fsm = this.addComponent(ActorStateMachine)
         this.fsm.init(data.type)
 
@@ -42,8 +45,6 @@ export class ActorManager extends EntityManager {
         } else {
             this.state = EntityStateEnum.Idle
         }
-
-
     }
 
     render(data: IActor) {

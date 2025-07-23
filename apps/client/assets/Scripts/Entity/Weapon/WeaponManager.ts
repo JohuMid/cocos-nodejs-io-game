@@ -1,19 +1,22 @@
 import { _decorator, Component, EventTouch, input, Input, instantiate, log, Node, UITransform, Vec2 } from 'cc';
 import DataManager from '../../Global/DataManager';
 import { EntityTypeEnum, InputTypeEnum } from '../../Common/Enum';
-import { EntityStateEnum } from '../../Enum';
+import { EntityStateEnum, EventEnum } from '../../Enum';
 import { EntityManager } from '../../Base/EntityManager';
 import { IActor } from '../../Common';
 import { WeaponStateMachine } from './WeaponStateMachine';
+import EventManager from '../../Global/EventManager';
 
 const { ccclass, property } = _decorator;
 
 @ccclass('WeaponManager')
 export class WeaponManager extends EntityManager {
-    private body:Node
-    private anchor:Node
-    private point:Node
+    owner: number
+    private body: Node
+    private anchor: Node
+    private point: Node
     init(data: IActor) {
+        this.owner = data.id
         this.body = this.node.getChildByName("Body")
         this.anchor = this.body.getChildByName("Anchor")
         this.point = this.anchor.getChildByName("Point")
@@ -22,6 +25,34 @@ export class WeaponManager extends EntityManager {
         this.fsm.init(data.weaponType)
 
         this.state = EntityStateEnum.Idle
+
+        EventManager.Instance.on(EventEnum.WeaponShoot, this.handleWeaponShoot, this)
+    }
+
+    onDestroy() {
+        EventManager.Instance.off(EventEnum.WeaponShoot, this.handleWeaponShoot, this)
+    }
+
+    handleWeaponShoot() {
+        const pointWorldPos = this.point.getWorldPosition()
+        const pointStagePos = DataManager.Instance.stage.getComponent(UITransform).convertToNodeSpaceAR(pointWorldPos)
+        const anchorWorldPos = this.anchor.getWorldPosition()
+
+        const direction = new Vec2(pointStagePos.x - anchorWorldPos.x, pointStagePos.y - anchorWorldPos.y).normalize()
+        DataManager.Instance.applyInput({
+            type: InputTypeEnum.WeaponShoot,
+            owner: this.owner,
+            position: {
+                x: pointStagePos.x,
+                y: pointStagePos.y,
+            },
+            direction: {
+                x: direction.x,
+                y: direction.y,
+            }
+        })
+        console.log(DataManager.Instance.state.buttles);
+        
     }
 }
 
