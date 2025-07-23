@@ -7,5 +7,6 @@ export enum EntityTypeEnum {
     Actor1 = "Actor1",
     Map = "Map",
     Weapon1 = "Weapon1",
-    Buttle1 = "Buttle1",
+    Bullet1 = "Bullet1",
+    Bullet2 = "Bullet2",
 }

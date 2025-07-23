@@ -1,8 +1,9 @@
 import { Prefab, SpriteFrame, Node } from "cc";
 import Singleton from "../Base/Singleton";
-import { EntityTypeEnum, IActorMove, IButtle, IClientInput, InputTypeEnum, IState } from "../Common";
+import { EntityTypeEnum, IActorMove, IBullet, IClientInput, InputTypeEnum, IState } from "../Common";
 import { ActorManager } from "../Entity/Actor/ActorManager";
 import { JoyStickManager } from "../UI/JoyStickManager";
+import { BulletManager } from "../Entity/Bullet/BulletManager";
 
 const ACTOR_SPEED = 100
 
@@ -14,6 +15,7 @@ export default class DataManager extends Singleton {
   stage: Node
   jm: JoyStickManager
   actorMap: Map<number, ActorManager> = new Map()
+  bulletMap: Map<number, BulletManager> = new Map()
   prefabMap: Map<string, Prefab> = new Map()
   textureMap: Map<string, SpriteFrame[]> = new Map()
 
@@ -23,7 +25,7 @@ export default class DataManager extends Singleton {
         id: 1,
         type: EntityTypeEnum.Actor1,
         weaponType: EntityTypeEnum.Weapon1,
-        buttleType: EntityTypeEnum.Buttle1,
+        bulletType: EntityTypeEnum.Bullet2,
         position: {
           x: 0,
           y: 0,
@@ -35,8 +37,8 @@ export default class DataManager extends Singleton {
         }
       }
     ],
-    buttles: [],
-    nextButtleId: 1
+    bullets: [],
+    nextBulletId: 1
   }
 
   applyInput(input: IClientInput) {
@@ -54,14 +56,14 @@ export default class DataManager extends Singleton {
       }
       case InputTypeEnum.WeaponShoot: {
         const { owner, position, direction } = input
-        const buttle: IButtle = {
-          id: this.state.nextButtleId++,
+        const bullet: IBullet = {
+          id: this.state.nextBulletId++,
           owner,
           position,
           direction,
-          type:this.actorMap.get(owner).buttleType,
+          type:this.actorMap.get(owner).bulletType,
         }
-        this.state.buttles.push(buttle)
+        this.state.bullets.push(bullet)
         break
       }
     }

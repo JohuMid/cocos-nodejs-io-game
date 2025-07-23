@@ -51,7 +51,7 @@ export class WeaponManager extends EntityManager {
                 y: direction.y,
             }
         })
-        console.log(DataManager.Instance.state.buttles);
+        console.log(DataManager.Instance.state.bullets);
         
     }
 }

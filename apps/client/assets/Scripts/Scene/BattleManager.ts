@@ -5,6 +5,7 @@ import { ResourceManager } from '../Global/ResourceManager';
 import { ActorManager } from '../Entity/Actor/ActorManager';
 import { PrefabPathEnum, TexturePathEnum } from '../Enum';
 import { EntityTypeEnum } from '../Common';
+import { BulletManager } from '../Entity/Bullet/BulletManager';
 const { ccclass, property } = _decorator;
 
 @ccclass('BattleManager')
@@ -45,7 +46,6 @@ export class BattleManager extends Component {
         }
 
         await Promise.all(list)
-
     }
 
     initMap() {
@@ -64,6 +64,7 @@ export class BattleManager extends Component {
 
     render() {
         this.renderActor()
+        this.renderBullet()
     }
 
     tick(dt: number) {
@@ -90,6 +91,23 @@ export class BattleManager extends Component {
                 actor.init(data)
             } else {
                 actor.render(data)
+            }
+        }
+    }
+
+    renderBullet() {
+        for (const data of DataManager.Instance.state.bullets) {
+            const { id, type } = data
+            let bm = DataManager.Instance.bulletMap.get(id)
+            if (!bm) {
+                const prefab = DataManager.Instance.prefabMap.get(type)
+                const bullet = instantiate(prefab)
+                bullet.setParent(this.stage)
+                bm = bullet.addComponent(BulletManager)
+                DataManager.Instance.bulletMap.set(data.id, bm)
+                bm.init(data)
+            } else {
+                bm.render(data) 
             }
         }
     }

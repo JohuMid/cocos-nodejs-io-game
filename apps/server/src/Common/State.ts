@@ -11,10 +11,10 @@ export interface IActor {
     direction: IVec2,
     type: EntityTypeEnum,
     weaponType: EntityTypeEnum,
-    buttleType: EntityTypeEnum,
+    bulletType: EntityTypeEnum,
 }
 
-export interface IButtle {
+export interface IBullet {
     id: number,
     owner: number,
     position: IVec2,
@@ -24,8 +24,8 @@ export interface IButtle {
 
 export interface IState {
     actors: IActor[],
-    buttles: IButtle[],
-    nextButtleId: number,
+    bullets: IBullet[],
+    nextBulletId: number,
 }
 
 export type IClientInput = IActorMove | IWeaponShoot
