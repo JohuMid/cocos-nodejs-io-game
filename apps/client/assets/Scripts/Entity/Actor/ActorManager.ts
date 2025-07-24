@@ -40,7 +40,6 @@ export class ActorManager extends EntityManager {
                 },
                 dt,
             })
-            console.log(DataManager.Instance.state.actors[0].position.x);
             this.state = EntityStateEnum.Run
         } else {
             this.state = EntityStateEnum.Idle
@@ -51,7 +50,7 @@ export class ActorManager extends EntityManager {
         const { direction, position } = data
         this.node.setPosition(position.x, position.y)
 
-        if (direction.x !== 0 || direction.y !== 0) {
+        if (direction.x !== 0) {
             this.node.setScale(direction.x > 0 ? 1 : -1, 1)
         }
         const side = Math.sqrt(direction.x ** 2 + direction.y ** 2)

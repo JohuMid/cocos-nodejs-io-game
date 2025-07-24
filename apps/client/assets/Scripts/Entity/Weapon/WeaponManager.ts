@@ -34,11 +34,16 @@ export class WeaponManager extends EntityManager {
     }
 
     handleWeaponShoot() {
-        const pointWorldPos = this.point.getWorldPosition()
-        const pointStagePos = DataManager.Instance.stage.getComponent(UITransform).convertToNodeSpaceAR(pointWorldPos)
-        const anchorWorldPos = this.anchor.getWorldPosition()
+        const pointWorldPos = this.point.getWorldPosition();
+        const pointStagePos = DataManager.Instance.stage
+            .getComponent(UITransform)
+            .convertToNodeSpaceAR(pointWorldPos);
 
-        const direction = new Vec2(pointStagePos.x - anchorWorldPos.x, pointStagePos.y - anchorWorldPos.y).normalize()
+        const anchorWorldPos = this.anchor.getWorldPosition();
+        const direction = new Vec2(
+            pointWorldPos.x - anchorWorldPos.x,
+            pointWorldPos.y - anchorWorldPos.y
+        ).normalize();
         DataManager.Instance.applyInput({
             type: InputTypeEnum.WeaponShoot,
             owner: this.owner,
@@ -52,7 +57,6 @@ export class WeaponManager extends EntityManager {
             }
         })
         console.log(DataManager.Instance.state.bullets);
-        
     }
 }
 
