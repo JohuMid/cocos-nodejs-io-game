@@ -8,6 +8,7 @@ import { BulletStateMachine } from './BulletStateMachine';
 import EventManager from '../../Global/EventManager';
 import DataManager from '../../Global/DataManager';
 import { ExplosionManager } from '../Explosion/ExplosionManager';
+import { ObjectPoolManager } from '../../Global/ObjectPoolManager';
 const { ccclass, property } = _decorator;
 
 @ccclass('BulletManager')
@@ -32,15 +33,14 @@ export class BulletManager extends EntityManager {
             return
         }
 
-        const explosionPrefab = DataManager.Instance.prefabMap.get(EntityTypeEnum.Explosion)
-        const explosion = instantiate(explosionPrefab)
-        explosion.setParent(DataManager.Instance.stage)
-        const em = explosion.addComponent(ExplosionManager)
+        const explosion = ObjectPoolManager.Instance.get(EntityTypeEnum.Explosion)
+        const em = explosion.getComponent(ExplosionManager) || explosion.addComponent(ExplosionManager)
         em.init(EntityTypeEnum.Explosion, { x, y })
 
         EventManager.Instance.off(EventEnum.ExplosionBorn, this.onExplosionBorn, this)
         DataManager.Instance.bulletMap.delete(this.id)
         this.node.destroy()
+        ObjectPoolManager.Instance.ret(this.node)
     }
 
     render(data: IBullet) {
