@@ -3,7 +3,7 @@ import { EntityTypeEnum } from '../../Common/Enum';
 import { IBullet } from '../../Common';
 import { EntityManager } from '../../Base/EntityManager';
 import { EntityStateEnum } from '../../Enum';
-import { rad2Angel } from '../../Utils';
+import { rad2Angle } from '../../Utils';
 import { BulletStateMachine } from './BulletStateMachine';
 const { ccclass, property } = _decorator;
 
@@ -27,8 +27,8 @@ export class BulletManager extends EntityManager {
         const side = Math.sqrt(direction.x ** 2 + direction.y ** 2);
         const angle =
             direction.x > 0
-                ? rad2Angel(Math.asin(direction.y / side))
-                : rad2Angel(Math.asin(-direction.y / side)) + 180;
+                ? rad2Angle(Math.asin(direction.y / side))
+                : rad2Angle(Math.asin(-direction.y / side)) + 180;
         this.node.setRotationFromEuler(0, 0, angle);
     }
 }

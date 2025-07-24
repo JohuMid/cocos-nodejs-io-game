@@ -6,7 +6,7 @@ import { EntityManager } from '../../Base/EntityManager';
 import { ActorStateMachine } from './ActorStateMachine';
 import { EntityStateEnum } from '../../Enum';
 import { WeaponManager } from '../Weapon/WeaponManager';
-import { rad2Angel } from '../../Utils';
+import { rad2Angle } from '../../Utils';
 const { ccclass, property } = _decorator;
 
 @ccclass('ActorManager')
@@ -47,15 +47,14 @@ export class ActorManager extends EntityManager {
     }
 
     render(data: IActor) {
-        const { direction, position } = data
-        this.node.setPosition(position.x, position.y)
-
-        if (direction.x !== 0) {
-            this.node.setScale(direction.x > 0 ? 1 : -1, 1)
+        const { x, y } = data.direction;
+        const { x: px, y: py } = data.position;
+        this.node.setPosition(px, py)
+        if (x !== 0) {
+            this.node.setScale(x > 0 ? 1 : -1, 1);
         }
-        const side = Math.sqrt(direction.x ** 2 + direction.y ** 2)
-        const rad = Math.asin(direction.y / side)
-        const angle = rad2Angel(rad)
+        const side = Math.sqrt(x * x + y * y);
+        const angle = rad2Angle(Math.asin(y / side));
         this.wm.node.setRotationFromEuler(0, 0, angle)
     }
 }
