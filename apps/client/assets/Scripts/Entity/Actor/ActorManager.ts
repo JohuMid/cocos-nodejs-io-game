@@ -1,4 +1,4 @@
-import { _decorator, Component, EventTouch, input, Input, instantiate, log, Node, UITransform, Vec2 } from 'cc';
+import { _decorator, Component, EventTouch, input, Input, instantiate, log, Node, ProgressBar, UITransform, Vec2 } from 'cc';
 import DataManager from '../../Global/DataManager';
 import { EntityTypeEnum, InputTypeEnum } from '../../Common/Enum';
 import { IActor } from '../../Common';
@@ -11,10 +11,15 @@ const { ccclass, property } = _decorator;
 
 @ccclass('ActorManager')
 export class ActorManager extends EntityManager {
-    bulletType:EntityTypeEnum
+    bulletType: EntityTypeEnum
+    id: number
+
+    private hp: ProgressBar
 
     private wm: WeaponManager
     init(data: IActor) {
+        this.hp = this.node.getComponentInChildren(ProgressBar)
+        this.id = data.id
         this.bulletType = data.bulletType
         this.fsm = this.addComponent(ActorStateMachine)
         this.fsm.init(data.type)
@@ -29,6 +34,9 @@ export class ActorManager extends EntityManager {
     }
 
     tick(dt: number): void {
+        if (this.id !== DataManager.Instance.myPlayerId) {
+            return
+        }
         if (DataManager.Instance.jm.input.length()) {
             const { x, y } = DataManager.Instance.jm.input
             DataManager.Instance.applyInput({
@@ -52,10 +60,13 @@ export class ActorManager extends EntityManager {
         this.node.setPosition(px, py)
         if (x !== 0) {
             this.node.setScale(x > 0 ? 1 : -1, 1);
+            this.hp.node.setScale(x > 0 ? 1 : -1, 1);
         }
         const side = Math.sqrt(x * x + y * y);
         const angle = rad2Angle(Math.asin(y / side));
         this.wm.node.setRotationFromEuler(0, 0, angle)
+
+        this.hp.progress = data.hp / this.hp.totalLength
     }
 }
 

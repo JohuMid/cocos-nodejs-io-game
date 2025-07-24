@@ -7,6 +7,7 @@ export interface IVec2 {
 
 export interface IActor {
     id: number,
+    hp:number,
     position: IVec2,
     direction: IVec2,
     type: EntityTypeEnum,
@@ -28,7 +29,12 @@ export interface IState {
     nextBulletId: number,
 }
 
-export type IClientInput = IActorMove | IWeaponShoot
+export interface ITimePass{
+    type:InputTypeEnum.TimePass,
+    dt:number,
+}
+
+export type IClientInput = IActorMove | IWeaponShoot | ITimePass
 
 export interface IActorMove {
     id: number,

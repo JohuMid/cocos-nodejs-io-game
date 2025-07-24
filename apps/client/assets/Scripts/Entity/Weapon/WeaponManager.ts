@@ -27,13 +27,18 @@ export class WeaponManager extends EntityManager {
         this.state = EntityStateEnum.Idle
 
         EventManager.Instance.on(EventEnum.WeaponShoot, this.handleWeaponShoot, this)
+        EventManager.Instance.on(EventEnum.BullectBorn, this.handleBullectBorn, this)
     }
 
     onDestroy() {
         EventManager.Instance.off(EventEnum.WeaponShoot, this.handleWeaponShoot, this)
+        EventManager.Instance.off(EventEnum.BullectBorn, this.handleBullectBorn, this)
     }
 
     handleWeaponShoot() {
+        if (this.owner !== DataManager.Instance.myPlayerId) {
+            return
+        }
         const pointWorldPos = this.point.getWorldPosition();
         const pointStagePos = DataManager.Instance.stage
             .getComponent(UITransform)
@@ -57,6 +62,13 @@ export class WeaponManager extends EntityManager {
             }
         })
         console.log(DataManager.Instance.state.bullets);
+    }
+
+    handleBullectBorn(owner: number) {
+        if (owner !== this.owner) {
+            return
+        }
+        this.state = EntityStateEnum.Attack
     }
 }
 

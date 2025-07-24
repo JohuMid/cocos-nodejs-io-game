@@ -1,26 +1,50 @@
 import { _decorator, Component, EventTouch, input, Input, instantiate, log, Node, UITransform, Vec2 } from 'cc';
 import { EntityTypeEnum } from '../../Common/Enum';
-import { IBullet } from '../../Common';
+import { IBullet, IVec2 } from '../../Common';
 import { EntityManager } from '../../Base/EntityManager';
-import { EntityStateEnum } from '../../Enum';
+import { EntityStateEnum, EventEnum } from '../../Enum';
 import { rad2Angle } from '../../Utils';
 import { BulletStateMachine } from './BulletStateMachine';
+import EventManager from '../../Global/EventManager';
+import DataManager from '../../Global/DataManager';
+import { ExplosionManager } from '../Explosion/ExplosionManager';
 const { ccclass, property } = _decorator;
 
 @ccclass('BulletManager')
 export class BulletManager extends EntityManager {
     type: EntityTypeEnum
+    id: number
 
     init(data: IBullet) {
         this.type = data.type
+        this.id = data.id
         this.fsm = this.addComponent(BulletStateMachine)
         this.fsm.init(data.type)
 
         this.state = EntityStateEnum.Idle
+        this.node.active = false
+
+        EventManager.Instance.on(EventEnum.ExplosionBorn, this.onExplosionBorn, this)
+    }
+
+    onExplosionBorn(id: number, { x, y }: IVec2) {
+        if (this.id !== id) {
+            return
+        }
+
+        const explosionPrefab = DataManager.Instance.prefabMap.get(EntityTypeEnum.Explosion)
+        const explosion = instantiate(explosionPrefab)
+        explosion.setParent(DataManager.Instance.stage)
+        const em = explosion.addComponent(ExplosionManager)
+        em.init(EntityTypeEnum.Explosion, { x, y })
+
+        EventManager.Instance.off(EventEnum.ExplosionBorn, this.onExplosionBorn, this)
+        DataManager.Instance.bulletMap.delete(this.id)
+        this.node.destroy()
     }
 
     render(data: IBullet) {
-
+        this.node.active = true
 
         const { direction, position } = data;
         this.node.setPosition(position.x, position.y)
