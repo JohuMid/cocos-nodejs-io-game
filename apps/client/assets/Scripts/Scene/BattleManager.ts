@@ -7,6 +7,7 @@ import { PrefabPathEnum, TexturePathEnum } from '../Enum';
 import { EntityTypeEnum, InputTypeEnum } from '../Common';
 import { BulletManager } from '../Entity/Bullet/BulletManager';
 import { ObjectPoolManager } from '../Global/ObjectPoolManager';
+import { NetworkManager } from '../Global/NetworkManager';
 const { ccclass, property } = _decorator;
 
 @ccclass('BattleManager')
@@ -24,9 +25,23 @@ export class BattleManager extends Component {
     }
 
     async start() {
-        await this.loadRes()
-        this.initMap()
-        this.showUpdate = true
+        await this.connectServer()
+        NetworkManager.Instance.sendMsg('hello,ddassadssa')
+        NetworkManager.Instance.listenMsg('haha',(data)=>{
+            console.log('监听监听',data);
+
+            
+        },this)
+
+        // await this.loadRes()
+        // this.initMap()
+        // this.showUpdate = true
+    }
+    async connectServer() {
+        if (!await NetworkManager.Instance.connect().catch(() => false)) {
+            await new Promise(resolve => setTimeout(resolve, 1000))
+            this.connectServer()
+        }
     }
 
     async loadRes() {
