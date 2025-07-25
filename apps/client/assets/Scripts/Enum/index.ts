@@ -13,6 +13,7 @@ export enum EventEnum {
     WeaponShoot = "WeaponShoot",
     ExplosionBorn = "ExplosionBorn",
     BullectBorn = "BullectBorn",
+    ClientSync = "ClientSync",
 }
 
 
