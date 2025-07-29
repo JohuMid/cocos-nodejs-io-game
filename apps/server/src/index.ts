@@ -1,11 +1,22 @@
 import { ApiMsgEnum } from "./Common";
+import { MyServer } from "./Core";
 import { symlinkCommon } from "./Utils";
 
 import { WebSocketServer } from 'ws'
 
 symlinkCommon();
 
-const wss = new WebSocketServer({
+const server = new MyServer({
+    port: 9876
+})
+
+server.start().then(() => {
+    console.log('服务启动成功');
+}).catch((e) => {
+    console.log('服务启动失败', e);
+})
+
+/* const wss = new WebSocketServer({
     port: 9876
 })
 
@@ -42,3 +53,4 @@ wss.on('connection', (socket) => {
 wss.on('listening', () => {
     console.log('服务启动成功');
 })
+ */
