@@ -1,5 +1,5 @@
 import { ApiMsgEnum } from "./Common";
-import { MyServer } from "./Core";
+import { Connection, MyServer } from "./Core";
 import { symlinkCommon } from "./Utils";
 
 import { WebSocketServer } from 'ws'
@@ -8,6 +8,10 @@ symlinkCommon();
 
 const server = new MyServer({
     port: 9876
+})
+
+server.setApi(ApiMsgEnum.ApiPlayerJoin, (connection:Connection,data:any) => {
+    return data+'我是服务端，我知道了'
 })
 
 server.start().then(() => {

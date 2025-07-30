@@ -1,9 +1,15 @@
-import { _decorator, resources, Asset } from "cc";
+import { _decorator, resources, Asset, error } from "cc";
 import Singleton from "../Base/Singleton";
 
 interface IItem {
     cb: Function;
     ctx: unknown;
+}
+
+interface ICallApiRet {
+    success: boolean,
+    res?: any,
+    error?: Error
 }
 
 export class NetworkManager extends Singleton {
@@ -48,6 +54,25 @@ export class NetworkManager extends Singleton {
         })
     }
 
+    callApi(name: string, data): Promise<ICallApiRet> {
+        return new Promise((resolve, reject) => {
+            try {
+                const timer = setTimeout(() => {
+                    resolve({ success: false, error: new Error('超时') })
+                }, 5000);
+                const cb = (res) => {
+                    resolve(res)
+                    clearTimeout(timer)
+                    this.unlistenMsg(name, cb, null)
+                }
+                this.listenMsg(name, cb, null)
+                this.sendMsg(name, data)
+            } catch (error) {
+                resolve({ success: false, error: new Error('超时') })
+            }
+        })
+    }
+
     sendMsg(name: string, data) {
         const msg = {
             name,
@@ -67,6 +92,6 @@ export class NetworkManager extends Singleton {
         if (this.map.has(name)) {
             const index = this.map.get(name).findIndex((i) => cb === i.cb && i.ctx === ctx);
             index > -1 && this.map.get(name).splice(index, 1);
-          }
+        }
     }
 }
