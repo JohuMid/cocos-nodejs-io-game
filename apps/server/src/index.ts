@@ -1,5 +1,5 @@
 import { PlayerManager } from "./Biz/PlayerManager";
-import { ApiMsgEnum, IApiPlayerJoinReq } from "./Common";
+import { ApiMsgEnum, IApiPlayerJoinReq, IApiPlayerJoinRes, IApiPlayerListReq, IApiPlayerListRes } from "./Common";
 import { Connection, MyServer } from "./Core";
 import { symlinkCommon } from "./Utils";
 
@@ -27,11 +27,11 @@ server.on("disconnection", (connection: Connection) => {
     if (connection.playerId) {
         PlayerManager.Instance.removePlayer(connection.playerId)
     }
-    console.log("玩家数量", PlayerManager.Instance.players.size);
-    
+    PlayerManager.Instance.syncPlayers()
+
 })
 
-server.setApi(ApiMsgEnum.ApiPlayerJoin, (connection: Connection, data: IApiPlayerJoinReq) => {
+server.setApi(ApiMsgEnum.ApiPlayerJoin, (connection: Connection, data: IApiPlayerJoinReq): IApiPlayerJoinRes => {
     const { nickname } = data
     const player = PlayerManager.Instance.createPlayer({
         nickname: nickname,
@@ -39,8 +39,16 @@ server.setApi(ApiMsgEnum.ApiPlayerJoin, (connection: Connection, data: IApiPlaye
     })
     connection.playerId = player.id
 
+    PlayerManager.Instance.syncPlayers()
+
     return {
         player: PlayerManager.Instance.getPlayerView(player)
+    }
+})
+
+server.setApi(ApiMsgEnum.ApiPlayerList, (connection: Connection, data: IApiPlayerListReq): IApiPlayerListRes => {
+    return {
+        list: PlayerManager.Instance.getPlayersView()
     }
 })
 

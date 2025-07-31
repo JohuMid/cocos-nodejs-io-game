@@ -10,7 +10,7 @@ export class LoginManager extends Component {
     input: EditBox
     onLoad() {
         this.input = this.getComponentInChildren(EditBox)
-        director.preloadScene(SceneEnum.Battle)
+        director.preloadScene(SceneEnum.Hail)
     }
 
     async start() {
@@ -40,6 +40,6 @@ export class LoginManager extends Component {
 
         DataManager.Instance.myPlayerId = res.player.id
         console.log("res", res)
-        director.loadScene(SceneEnum.Battle)
+        director.loadScene(SceneEnum.Hail)
     }
 }
