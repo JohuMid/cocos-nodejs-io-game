@@ -10,10 +10,10 @@ export enum ParamsNameEnum {
 }
 
 export enum EventEnum {
-    WeaponShoot = "WeaponShoot",
-    ExplosionBorn = "ExplosionBorn",
-    BullectBorn = "BullectBorn",
-    ClientSync = "ClientSync",
+  WeaponShoot = "WeaponShoot",
+  ExplosionBorn = "ExplosionBorn",
+  BullectBorn = "BullectBorn",
+  ClientSync = "ClientSync",
 }
 
 
@@ -38,4 +38,9 @@ export enum EntityStateEnum {
   Idle = "Idle",
   Run = "Run",
   Attack = "Attack",
+}
+
+export enum SceneEnum {
+  Login = "Login",
+  Battle = "Battle",
 }

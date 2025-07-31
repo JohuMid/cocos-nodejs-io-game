@@ -17,15 +17,21 @@ export class NetworkManager extends Singleton {
         return super.GetInstance<NetworkManager>();
     }
 
+    isConnected = false
     port = 9876
     ws: WebSocket
     private map: Map<string, Array<IItem>> = new Map();
 
     connect() {
         return new Promise((resolve, reject) => {
+            if (this.isConnected) {
+                resolve(true)
+                return
+            }
             this.ws = new WebSocket(`ws://localhost:${this.port}`)
             this.ws.onopen = () => {
                 console.log('连接成功')
+                this.isConnected = true
                 resolve(true)
             }
             this.ws.onmessage = (event) => {
@@ -45,10 +51,12 @@ export class NetworkManager extends Singleton {
             }
             this.ws.onerror = (event) => {
                 console.log('连接错误', event)
+                this.isConnected = false
                 reject(false)
             }
             this.ws.onclose = () => {
                 console.log('连接关闭')
+                this.isConnected = false
                 reject(false)
             }
         })

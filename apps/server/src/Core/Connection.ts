@@ -10,6 +10,7 @@ interface IItem {
 export class Connection extends EventEmitter {
 
     private msgMap: Map<string, Array<IItem>> = new Map();
+
     constructor(private server: MyServer, private ws: WebSocket) {
         super()
 
