@@ -1,6 +1,6 @@
 import { WebSocketServer, WebSocket, EventEmitter } from 'ws'
 import { Connection } from './Connection'
-import { ApiMsgEnum } from '../Common'
+import { ApiMsgEnum, IModel } from '../Common'
 export class MyServer extends EventEmitter {
     port: number
     wss: WebSocketServer
@@ -34,7 +34,7 @@ export class MyServer extends EventEmitter {
 
                 connection.on('close', () => {
                     this.emit("disconnection", connection)
-                    
+
 
                     this.connections.delete(connection)
                 })
@@ -42,7 +42,7 @@ export class MyServer extends EventEmitter {
         })
     }
 
-    setApi(name: ApiMsgEnum, cb: Function) {
+    setApi<T extends keyof IModel["api"]>(name: T, cb: (connection: Connection, args: IModel["api"][T]["req"]) => void) {
         this.apiMap.set(name, cb)
     }
 }

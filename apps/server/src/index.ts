@@ -1,5 +1,5 @@
 import { PlayerManager } from "./Biz/PlayerManager";
-import { ApiMsgEnum } from "./Common";
+import { ApiMsgEnum, IApiPlayerJoinReq } from "./Common";
 import { Connection, MyServer } from "./Core";
 import { symlinkCommon } from "./Utils";
 
@@ -31,7 +31,7 @@ server.on("disconnection", (connection: Connection) => {
     
 })
 
-server.setApi(ApiMsgEnum.ApiPlayerJoin, (connection: Connection, data: any) => {
+server.setApi(ApiMsgEnum.ApiPlayerJoin, (connection: Connection, data: IApiPlayerJoinReq) => {
     const { nickname } = data
     const player = PlayerManager.Instance.createPlayer({
         nickname: nickname,

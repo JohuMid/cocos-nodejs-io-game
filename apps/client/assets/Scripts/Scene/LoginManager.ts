@@ -1,14 +1,8 @@
 import { _decorator, Component, director, EditBox, EventTouch, input, Input, instantiate, log, Node, Prefab, SpriteFrame, UITransform, Vec2 } from 'cc';
 import DataManager from '../Global/DataManager';
-import { JoyStickManager } from '../UI/JoyStickManager';
-import { ResourceManager } from '../Global/ResourceManager';
-import { ActorManager } from '../Entity/Actor/ActorManager';
-import { EventEnum, PrefabPathEnum, SceneEnum, TexturePathEnum } from '../Enum';
-import { ApiMsgEnum, EntityTypeEnum, IClientInput, InputTypeEnum } from '../Common';
-import { BulletManager } from '../Entity/Bullet/BulletManager';
-import { ObjectPoolManager } from '../Global/ObjectPoolManager';
+import { SceneEnum } from '../Enum';
+import { ApiMsgEnum } from '../Common';
 import { NetworkManager } from '../Global/NetworkManager';
-import EventManager from '../Global/EventManager';
 const { ccclass, property } = _decorator;
 
 @ccclass('LoginManager')

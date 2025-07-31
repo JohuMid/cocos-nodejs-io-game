@@ -4,7 +4,7 @@ import { JoyStickManager } from '../UI/JoyStickManager';
 import { ResourceManager } from '../Global/ResourceManager';
 import { ActorManager } from '../Entity/Actor/ActorManager';
 import { EventEnum, PrefabPathEnum, TexturePathEnum } from '../Enum';
-import { ApiMsgEnum, EntityTypeEnum, IClientInput, InputTypeEnum } from '../Common';
+import { ApiMsgEnum, EntityTypeEnum, IClientInput, IMsgClientSync, IMsgServerSync, InputTypeEnum } from '../Common';
 import { BulletManager } from '../Entity/Bullet/BulletManager';
 import { ObjectPoolManager } from '../Global/ObjectPoolManager';
 import { NetworkManager } from '../Global/NetworkManager';
@@ -18,10 +18,7 @@ export class BattleManager extends Component {
 
     private showUpdate = false
 
-    onLoad() {
-
-
-    }
+    onLoad() { }
 
     async start() {
         this.clearGame()
@@ -29,13 +26,6 @@ export class BattleManager extends Component {
             this.loadRes(),
             this.connectServer(),
         ])
-        const {success,error,res} =  await NetworkManager.Instance.callApi(ApiMsgEnum.ApiPlayerJoin, "我是cocos")
-        if (!success) {
-            console.log(error)
-            return
-        }
-
-        console.log("res",res)
         // this.initGame()
 
     }
@@ -152,14 +142,14 @@ export class BattleManager extends Component {
     }
 
     handleClientSync(input: IClientInput) {
-        const msg = {
+        const msg: IMsgClientSync = {
             input,
             frameId: DataManager.Instance.frameId++
         }
         NetworkManager.Instance.sendMsg(ApiMsgEnum.MsgClientSync, msg)
     }
 
-    handleServerSync({ inputs }: any) {
+    handleServerSync({ inputs }: IMsgServerSync) {
         for (const input of inputs) {
             DataManager.Instance.applyInput(input)
         }
