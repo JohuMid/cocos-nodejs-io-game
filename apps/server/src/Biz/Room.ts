@@ -1,12 +1,14 @@
+import { ApiMsgEnum } from "../Common"
 import { Player } from "./Player"
 import { PlayerManager } from "./PlayerManager"
+import { RoomManager } from "./RoomManager"
 
 export class Room {
     id: number
     players: Set<Player> = new Set()
 
 
-    constructor(rid:number) {
+    constructor(rid: number) {
         this.id = rid
     }
 
@@ -15,6 +17,14 @@ export class Room {
         if (player) {
             player.rid = this.id
             this.players.add(player)
+        }
+    }
+
+    sync() {
+        for (const player of this.players) {
+            player.connection.sendMsg(ApiMsgEnum.MsgRoom, {
+                room: RoomManager.Instance.getRoomView(this)
+            })
         }
     }
 }

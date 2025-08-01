@@ -1,6 +1,6 @@
-import { IApiPlayerJoinReq, IApiPlayerJoinRes, IApiPlayerListReq, IApiPlayerListRes, IApiRoomCreateReq, IApiRoomCreateRes, IApiRoomListReq, IApiRoomListRes } from "./Api"
+import { IApiPlayerJoinReq, IApiPlayerJoinRes, IApiPlayerListReq, IApiPlayerListRes, IApiRoomCreateReq, IApiRoomCreateRes, IApiRoomJoinReq, IApiRoomJoinRes, IApiRoomListReq, IApiRoomListRes } from "./Api"
 import { ApiMsgEnum } from "./Enum"
-import { IMsgClientSync, IMsgPlayerList, IMsgRoomList, IMsgServerSync } from "./Msg"
+import { IMsgClientSync, IMsgPlayerList, IMsgRoom, IMsgRoomList, IMsgServerSync } from "./Msg"
 
 export interface IModel {
     api: {
@@ -20,12 +20,17 @@ export interface IModel {
             req: IApiRoomListReq
             res: IApiRoomListRes
         },
+        [ApiMsgEnum.ApiRoomJoin]: {
+            req: IApiRoomJoinReq
+            res: IApiRoomJoinRes
+        },
     }
 
     msg: {
         [ApiMsgEnum.MsgClientSync]: IMsgClientSync,
         [ApiMsgEnum.MsgPlayerList]: IMsgPlayerList,
         [ApiMsgEnum.MsgRoomList]: IMsgRoomList,
+        [ApiMsgEnum.MsgRoom]: IMsgRoom,
         [ApiMsgEnum.MsgServerSync]: IMsgServerSync,
     }
 }

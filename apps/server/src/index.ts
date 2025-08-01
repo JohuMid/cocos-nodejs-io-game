@@ -1,6 +1,6 @@
 import { PlayerManager } from "./Biz/PlayerManager";
 import { RoomManager } from "./Biz/RoomManager";
-import { ApiMsgEnum, IApiPlayerJoinReq, IApiPlayerJoinRes, IApiPlayerListReq, IApiPlayerListRes, IApiRoomCreateReq, IApiRoomCreateRes, IApiRoomListReq, IApiRoomListRes } from "./Common";
+import { ApiMsgEnum, IApiPlayerJoinReq, IApiPlayerJoinRes, IApiPlayerListReq, IApiPlayerListRes, IApiRoomCreateReq, IApiRoomCreateRes, IApiRoomJoinReq, IApiRoomJoinRes, IApiRoomListReq, IApiRoomListRes } from "./Common";
 import { Connection, MyServer } from "./Core";
 import { symlinkCommon } from "./Utils";
 
@@ -73,6 +73,26 @@ server.setApi(ApiMsgEnum.ApiRoomCreate, (connection: Connection, data: IApiRoomC
             }
         } else {
             throw new Error('创建房间失败')
+        }
+    } else {
+        throw new Error('请先登录')
+    }
+
+})
+
+server.setApi(ApiMsgEnum.ApiRoomJoin, (connection: Connection, {rid}: IApiRoomJoinReq): IApiRoomJoinRes => {
+    if (connection.playerId) {
+        const room = RoomManager.Instance.joinRoom(rid, connection.playerId)
+
+        if (room) {
+            PlayerManager.Instance.syncPlayers()
+            RoomManager.Instance.syncRooms()
+            RoomManager.Instance.syncRoom(rid)
+            return {
+                room: RoomManager.Instance.getRoomView(room)
+            }
+        } else {
+            throw new Error('加入房间失败')
         }
     } else {
         throw new Error('请先登录')

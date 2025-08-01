@@ -14,6 +14,7 @@ export enum EventEnum {
   ExplosionBorn = "ExplosionBorn",
   BullectBorn = "BullectBorn",
   ClientSync = "ClientSync",
+  RoomJoin = "RoomJoin",
 }
 
 
