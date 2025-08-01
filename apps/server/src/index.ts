@@ -1,6 +1,6 @@
 import { PlayerManager } from "./Biz/PlayerManager";
 import { RoomManager } from "./Biz/RoomManager";
-import { ApiMsgEnum, IApiPlayerJoinReq, IApiPlayerJoinRes, IApiPlayerListReq, IApiPlayerListRes, IApiRoomCreateReq, IApiRoomCreateRes } from "./Common";
+import { ApiMsgEnum, IApiPlayerJoinReq, IApiPlayerJoinRes, IApiPlayerListReq, IApiPlayerListRes, IApiRoomCreateReq, IApiRoomCreateRes, IApiRoomListReq, IApiRoomListRes } from "./Common";
 import { Connection, MyServer } from "./Core";
 import { symlinkCommon } from "./Utils";
 
@@ -53,12 +53,21 @@ server.setApi(ApiMsgEnum.ApiPlayerList, (connection: Connection, data: IApiPlaye
     }
 })
 
+server.setApi(ApiMsgEnum.ApiRoomList, (connection: Connection, data: IApiRoomListReq): IApiRoomListRes => {
+    return {
+        list: RoomManager.Instance.getRoomsView()
+    }
+})
+
 
 server.setApi(ApiMsgEnum.ApiRoomCreate, (connection: Connection, data: IApiRoomCreateReq): IApiRoomCreateRes => {
     if (connection.playerId) {
         const newroom = RoomManager.Instance.createRoom()
         const room = RoomManager.Instance.joinRoom(newroom.id, connection.playerId)
+
         if (room) {
+            PlayerManager.Instance.syncPlayers()
+            RoomManager.Instance.syncRooms()
             return {
                 room: RoomManager.Instance.getRoomView(room)
             }

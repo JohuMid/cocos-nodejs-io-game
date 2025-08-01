@@ -1,4 +1,5 @@
 import Singleton from "../Base/Singleton";
+import { ApiMsgEnum } from "../Common";
 import { PlayerManager } from "./PlayerManager";
 import { Room } from "./Room";
 
@@ -43,6 +44,15 @@ export class RoomManager extends Singleton {
            }
        }
     */
+
+    syncRooms() {
+        for (const player of PlayerManager.Instance.players) {
+            player.connection.sendMsg(ApiMsgEnum.MsgRoomList, {
+                list: this.getRoomsView()
+            })
+        }
+    }
+    
     getRoomsView(rooms: Set<Room> = this.rooms) {
         return [...rooms].map(p => this.getRoomView(p))
     }
