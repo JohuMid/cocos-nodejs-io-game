@@ -27,23 +27,32 @@ export class RoomManager extends Singleton {
             return room
         }
     }
+
+    leaveRoom(rid: number, uid: number) {
+        const room = this.idMapRoom.get(rid)
+        if (room) {
+            room.leave(uid)
+        }
+    }
+
+    closeRoom(rid: number) {
+        const room = this.idMapRoom.get(rid)
+        if (room) {
+            room.close()
+            this.rooms.delete(room)
+            this.idMapRoom.delete(rid)
+        }
+    }
     /*
-       removePlayer(id: number) {
-           const player = this.idMapPlayer.get(id)
-           if (player) {
-               this.players.delete(player)
-               this.idMapPlayer.delete(id)
-           }
-       }
-   
-       syncPlayers() {
-           for (const player of this.players) {
-               player.connection.sendMsg(ApiMsgEnum.MsgPlayerList, {
-                   list: this.getPlayersView()
-               })
-           }
-       }
-    */
+ 
+    syncPlayers() {
+        for (const player of this.players) {
+            player.connection.sendMsg(ApiMsgEnum.MsgPlayerList, {
+                list: this.getPlayersView()
+            })
+        }
+    }
+ */
 
     syncRooms() {
         for (const player of PlayerManager.Instance.players) {

@@ -66,14 +66,13 @@ export class RoomManager extends Component {
         }
     } */
 
-    /* async handleCreateRoom() {
-        const { success, error, res } = await NetworkManager.Instance.callApi(ApiMsgEnum.ApiRoomCreate, {})
+    async handleLeaveRoom() {
+        const { success, error, res } = await NetworkManager.Instance.callApi(ApiMsgEnum.ApiRoomLeave, {})
         if (!success) {
             console.log(error)
             return
         }
-        DataManager.Instance.roomInfo = res.room
-        console.log('DataManager.Instance.roomInfo', DataManager.Instance.roomInfo)
-        director.loadScene(SceneEnum.Room)
-    } */
+        DataManager.Instance.roomInfo = null
+        director.loadScene(SceneEnum.Hail)
+    }
 }

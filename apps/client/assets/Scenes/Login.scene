@@ -607,7 +607,7 @@
       "b": 187,
       "a": 255
     },
-    "_string": "Enter text here...",
+    "_string": "输入你的昵称",
     "_horizontalAlign": 0,
     "_verticalAlign": 1,
     "_actualFontSize": 20,
@@ -887,7 +887,7 @@
       "b": 0,
       "a": 255
     },
-    "_string": "button",
+    "_string": "登录",
     "_horizontalAlign": 1,
     "_verticalAlign": 1,
     "_actualFontSize": 20,

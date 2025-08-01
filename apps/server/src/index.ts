@@ -1,6 +1,6 @@
 import { PlayerManager } from "./Biz/PlayerManager";
 import { RoomManager } from "./Biz/RoomManager";
-import { ApiMsgEnum, IApiPlayerJoinReq, IApiPlayerJoinRes, IApiPlayerListReq, IApiPlayerListRes, IApiRoomCreateReq, IApiRoomCreateRes, IApiRoomJoinReq, IApiRoomJoinRes, IApiRoomListReq, IApiRoomListRes } from "./Common";
+import { ApiMsgEnum, IApiPlayerJoinReq, IApiPlayerJoinRes, IApiPlayerListReq, IApiPlayerListRes, IApiRoomCreateReq, IApiRoomCreateRes, IApiRoomJoinReq, IApiRoomJoinRes, IApiRoomLeaveReq, IApiRoomLeaveRes, IApiRoomListReq, IApiRoomListRes } from "./Common";
 import { Connection, MyServer } from "./Core";
 import { symlinkCommon } from "./Utils";
 
@@ -80,7 +80,7 @@ server.setApi(ApiMsgEnum.ApiRoomCreate, (connection: Connection, data: IApiRoomC
 
 })
 
-server.setApi(ApiMsgEnum.ApiRoomJoin, (connection: Connection, {rid}: IApiRoomJoinReq): IApiRoomJoinRes => {
+server.setApi(ApiMsgEnum.ApiRoomJoin, (connection: Connection, { rid }: IApiRoomJoinReq): IApiRoomJoinRes => {
     if (connection.playerId) {
         const room = RoomManager.Instance.joinRoom(rid, connection.playerId)
 
@@ -94,6 +94,32 @@ server.setApi(ApiMsgEnum.ApiRoomJoin, (connection: Connection, {rid}: IApiRoomJo
         } else {
             throw new Error('加入房间失败')
         }
+    } else {
+        throw new Error('请先登录')
+    }
+
+})
+
+server.setApi(ApiMsgEnum.ApiRoomLeave, (connection: Connection, data: IApiRoomLeaveReq): IApiRoomLeaveRes => {
+    if (connection.playerId) {
+        const player = PlayerManager.Instance.idMapPlayer.get(connection.playerId)
+        if (player) {
+            const rid = player.rid
+
+            if (rid) {
+                RoomManager.Instance.leaveRoom(rid, player.id)
+                PlayerManager.Instance.syncPlayers()
+                RoomManager.Instance.syncRooms()
+                RoomManager.Instance.syncRoom(rid)
+                return {}
+            } else {
+                throw new Error('玩家未加入房间')
+            }
+        } else {
+            throw new Error('玩家不存在')
+        }
+
+
     } else {
         throw new Error('请先登录')
     }

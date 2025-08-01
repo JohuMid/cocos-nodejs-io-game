@@ -24,4 +24,5 @@ export enum ApiMsgEnum{
     MsgRoomList = "MsgRoomList",
     MsgRoom = "MsgRoom",
     ApiRoomJoin = "ApiRoomJoin",
+    ApiRoomLeave = "ApiRoomLeave",
 }
