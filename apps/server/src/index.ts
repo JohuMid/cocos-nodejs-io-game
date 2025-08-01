@@ -132,7 +132,6 @@ server.setApi(ApiMsgEnum.ApiGameStart, (connection: Connection, data: IApiGameSt
 
             if (rid) {
                 RoomManager.Instance.startGame(rid)
-                RoomManager.Instance.leaveRoom(rid, player.id)
                 PlayerManager.Instance.syncPlayers()
                 RoomManager.Instance.syncRooms()
                 RoomManager.Instance.syncRoom(rid)
