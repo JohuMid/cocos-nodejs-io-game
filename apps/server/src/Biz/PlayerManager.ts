@@ -2,6 +2,7 @@ import Singleton from "../Base/Singleton";
 import { ApiMsgEnum, IApiPlayerJoinReq } from "../Common";
 import { Connection } from "../Core";
 import { Player } from "./Player";
+import { RoomManager } from "./RoomManager";
 
 export class PlayerManager extends Singleton {
     static get Instance() {
@@ -23,6 +24,12 @@ export class PlayerManager extends Singleton {
     removePlayer(id: number) {
         const player = this.idMapPlayer.get(id)
         if (player) {
+            const rid = player.rid
+            if (rid) {
+                RoomManager.Instance.leaveRoom(rid, player.id)
+                RoomManager.Instance.syncRoom(rid)
+                RoomManager.Instance.syncRooms()
+            }
             this.players.delete(player)
             this.idMapPlayer.delete(id)
         }

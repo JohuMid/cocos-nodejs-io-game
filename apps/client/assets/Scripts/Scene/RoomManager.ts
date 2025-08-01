@@ -1,5 +1,5 @@
 import { _decorator, Component, Prefab, Node, instantiate, director } from 'cc';
-import { ApiMsgEnum, IApiPlayerListRes, IApiRoomListRes, IMsgRoom } from '../Common';
+import { ApiMsgEnum, IMsgRoom } from '../Common';
 import { NetworkManager } from '../Global/NetworkManager';
 import { PlayerManager } from '../UI/PlayerManager';
 import DataManager from '../Global/DataManager';
@@ -16,6 +16,7 @@ export class RoomManager extends Component {
     onLoad() {
         director.preloadScene(SceneEnum.Room)
         NetworkManager.Instance.listenMsg(ApiMsgEnum.MsgRoom, this.renderPlayer, this)
+        NetworkManager.Instance.listenMsg(ApiMsgEnum.MsgGameStart, this.handleGameStart, this)
     }
 
     start() {
@@ -24,6 +25,7 @@ export class RoomManager extends Component {
 
     onDestroy() {
         NetworkManager.Instance.unlistenMsg(ApiMsgEnum.MsgRoom, this.renderPlayer, this)
+        NetworkManager.Instance.unlistenMsg(ApiMsgEnum.MsgGameStart, this.handleGameStart, this)
     }
 
     renderPlayer({ room: { players: list } }: IMsgRoom) {
@@ -74,5 +76,18 @@ export class RoomManager extends Component {
         }
         DataManager.Instance.roomInfo = null
         director.loadScene(SceneEnum.Hail)
+    }
+
+    async handleStart() {
+        const { success, error, res } = await NetworkManager.Instance.callApi(ApiMsgEnum.ApiGameStart, {})
+        if (!success) {
+            console.log(error)
+            return
+        }
+    }
+
+    handleGameStart({ state }) {
+        DataManager.Instance.state = state
+        director.loadScene(SceneEnum.Battle)
     }
 }

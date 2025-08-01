@@ -25,7 +25,7 @@ export default class DataManager extends Singleton {
 
   myPlayerId = 1
   frameId = 1
-  roomInfo:IRoom
+  roomInfo: IRoom
 
   stage: Node
   jm: JoyStickManager
@@ -36,7 +36,7 @@ export default class DataManager extends Singleton {
 
   state: IState = {
     actors: [
-      {
+      /* {
         id: 1,
         hp: 30,
         type: EntityTypeEnum.Actor1,
@@ -67,7 +67,7 @@ export default class DataManager extends Singleton {
           x: 1,
           y: 0,
         }
-      }
+      } */
     ],
     bullets: [],
     nextBulletId: 1

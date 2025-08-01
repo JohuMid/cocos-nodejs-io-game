@@ -26,8 +26,7 @@ export class BattleManager extends Component {
             this.loadRes(),
             this.connectServer(),
         ])
-        // this.initGame()
-
+        this.initGame()
     }
 
     initGame() {
