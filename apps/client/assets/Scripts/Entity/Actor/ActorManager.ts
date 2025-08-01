@@ -1,4 +1,4 @@
-import { _decorator, Component, EventTouch, input, Input, instantiate, log, Node, ProgressBar, UITransform, Vec2 } from 'cc';
+import { _decorator, Component, EventTouch, input, Input, instantiate, log, Node, ProgressBar, tween, Tween, UITransform, Vec2, Vec3 } from 'cc';
 import DataManager from '../../Global/DataManager';
 import { EntityTypeEnum, InputTypeEnum } from '../../Common/Enum';
 import { IActor } from '../../Common';
@@ -16,7 +16,8 @@ export class ActorManager extends EntityManager {
     id: number
 
     private hp: ProgressBar
-
+    private targetPos: Vec3
+    private tw: Tween<Node>
     private wm: WeaponManager
     init(data: IActor) {
         this.hp = this.node.getComponentInChildren(ProgressBar)
@@ -26,6 +27,8 @@ export class ActorManager extends EntityManager {
         this.fsm.init(data.type)
 
         this.state = EntityStateEnum.Idle
+        this.node.active = false
+        this.targetPos = undefined
 
         const prefab = DataManager.Instance.prefabMap.get(EntityTypeEnum.Weapon1)
         const weapon = instantiate(prefab)
@@ -49,16 +52,40 @@ export class ActorManager extends EntityManager {
                 },
                 dt,
             })
-            this.state = EntityStateEnum.Run
         } else {
             this.state = EntityStateEnum.Idle
         }
     }
 
     render(data: IActor) {
-        const { x, y } = data.direction;
+        this.renderHp(data)
+        this.renderDire(data)
+        this.renderPosition(data)
+    }
+
+    renderPosition(data: IActor) {
         const { x: px, y: py } = data.position;
-        this.node.setPosition(px, py)
+        const newPos = new Vec3(px, py)
+        if (!this.targetPos) {
+            this.node.active = true
+            this.node.setPosition(newPos)
+            this.targetPos = new Vec3(newPos)
+        } else if (!this.targetPos.equals(newPos)) {
+            this.tw?.stop()
+            this.node.setPosition(this.targetPos)
+            this.targetPos.set(newPos)
+            this.state = EntityStateEnum.Run
+            this.tw = tween(this.node).to(0.1, {
+                position: this.targetPos
+            }).call(() => {
+                this.state = EntityStateEnum.Idle
+            }).start()
+        }
+        // this.node.setPosition(px, py)
+    }
+
+    renderDire(data: IActor) {
+        const { x, y } = data.direction;
         if (x !== 0) {
             this.node.setScale(x > 0 ? 1 : -1, 1);
             this.hp.node.setScale(x > 0 ? 1 : -1, 1);
@@ -66,7 +93,9 @@ export class ActorManager extends EntityManager {
         const side = Math.sqrt(x * x + y * y);
         const angle = rad2Angle(Math.asin(y / side));
         this.wm.node.setRotationFromEuler(0, 0, angle)
+    }
 
+    renderHp(data: IActor) {
         this.hp.progress = data.hp / this.hp.totalLength
     }
 }

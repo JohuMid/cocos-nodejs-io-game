@@ -1,4 +1,4 @@
-import { _decorator, Component, EventTouch, input, Input, instantiate, log, Node, UITransform, Vec2 } from 'cc';
+import { _decorator, Component, EventTouch, input, Input, instantiate, log, Node, tween, Tween, UITransform, Vec2, Vec3 } from 'cc';
 import { EntityTypeEnum } from '../../Common/Enum';
 import { IBullet, IVec2 } from '../../Common';
 import { EntityManager } from '../../Base/EntityManager';
@@ -16,6 +16,9 @@ export class BulletManager extends EntityManager {
     type: EntityTypeEnum
     id: number
 
+    private targetPos: Vec3
+    private tw: Tween
+
     init(data: IBullet) {
         this.type = data.type
         this.id = data.id
@@ -24,6 +27,7 @@ export class BulletManager extends EntityManager {
 
         this.state = EntityStateEnum.Idle
         this.node.active = false
+        this.targetPos = undefined
 
         EventManager.Instance.on(EventEnum.ExplosionBorn, this.onExplosionBorn, this)
     }
@@ -44,10 +48,29 @@ export class BulletManager extends EntityManager {
     }
 
     render(data: IBullet) {
-        this.node.active = true
+        this.renderPosition(data)
+        this.renderDirection(data)
+    }
 
-        const { direction, position } = data;
-        this.node.setPosition(position.x, position.y)
+    renderPosition(data: IBullet) {
+        const { x: px, y: py } = data.position;
+        const newPos = new Vec3(px, py)
+        if (!this.targetPos) {
+            this.node.active = true
+            this.node.setPosition(newPos)
+            this.targetPos = new Vec3(newPos)
+        } else if (!this.targetPos.equals(newPos)) {
+            this.tw?.stop()
+            this.node.setPosition(this.targetPos)
+            this.targetPos.set(newPos)
+            this.tw = tween(this.node).to(0.1, {
+                position: this.targetPos
+            }).start()
+        }
+    }
+
+    renderDirection(data: IBullet) {
+        const { direction } = data;
         const side = Math.sqrt(direction.x ** 2 + direction.y ** 2);
         const angle =
             direction.x > 0
