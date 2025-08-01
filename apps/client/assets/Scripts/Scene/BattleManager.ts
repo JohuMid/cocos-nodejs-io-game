@@ -1,4 +1,4 @@
-import { _decorator, Component, EventTouch, input, Input, instantiate, log, Node, Prefab, SpriteFrame, UITransform, Vec2 } from 'cc';
+import { _decorator, Component, EventTouch, input, Input, instantiate, LabelShadow, log, Node, Prefab, SpriteFrame, UITransform, Vec2 } from 'cc';
 import DataManager from '../Global/DataManager';
 import { JoyStickManager } from '../UI/JoyStickManager';
 import { ResourceManager } from '../Global/ResourceManager';
@@ -9,12 +9,14 @@ import { BulletManager } from '../Entity/Bullet/BulletManager';
 import { ObjectPoolManager } from '../Global/ObjectPoolManager';
 import { NetworkManager } from '../Global/NetworkManager';
 import EventManager from '../Global/EventManager';
+import { deepClone } from '../Utils';
 const { ccclass, property } = _decorator;
 
 @ccclass('BattleManager')
 export class BattleManager extends Component {
     private stage: Node
     private ui: Node
+    private pendingMsg: IMsgClientSync[] = []
 
     private showUpdate = false
 
@@ -146,11 +148,24 @@ export class BattleManager extends Component {
             frameId: DataManager.Instance.frameId++
         }
         NetworkManager.Instance.sendMsg(ApiMsgEnum.MsgClientSync, msg)
+
+        if (input.type === InputTypeEnum.ActorMove) {
+            DataManager.Instance.applyInput(input)
+            this.pendingMsg.push(msg)
+        }
     }
 
-    handleServerSync({ inputs }: IMsgServerSync) {
+    handleServerSync({ lastFrameId, inputs }: IMsgServerSync) {
+        DataManager.Instance.state = DataManager.Instance.lastState
         for (const input of inputs) {
             DataManager.Instance.applyInput(input)
+        }
+
+        DataManager.Instance.lastState = deepClone(DataManager.Instance.state)
+
+        this.pendingMsg = this.pendingMsg.filter((msg) => msg.frameId > lastFrameId)
+        for (const msg of this.pendingMsg) {
+            DataManager.Instance.applyInput(msg.input)
         }
     }
 }

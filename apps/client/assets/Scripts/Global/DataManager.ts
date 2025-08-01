@@ -34,6 +34,7 @@ export default class DataManager extends Singleton {
   prefabMap: Map<string, Prefab> = new Map()
   textureMap: Map<string, SpriteFrame[]> = new Map()
 
+  lastState: IState
   state: IState = {
     actors: [
       /* {
