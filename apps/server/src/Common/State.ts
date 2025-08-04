@@ -29,12 +29,12 @@ export interface IState {
     nextBulletId: number,
 }
 
-export interface ITimePass{
-    type:InputTypeEnum.TimePass,
+export interface ITimePast{
+    type:InputTypeEnum.TimePast,
     dt:number,
 }
 
-export type IClientInput = IActorMove | IWeaponShoot | ITimePass
+export type IClientInput = IActorMove | IWeaponShoot | ITimePast
 
 export interface IActorMove {
     id: number,

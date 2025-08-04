@@ -7,6 +7,7 @@ import { ActorStateMachine } from './ActorStateMachine';
 import { EntityStateEnum, EventEnum } from '../../Enum';
 import { WeaponManager } from '../Weapon/WeaponManager';
 import { rad2Angle } from '../../Utils';
+import { toFixed } from '../../Common/Utils';
 import EventManager from '../../Global/EventManager';
 const { ccclass, property } = _decorator;
 
@@ -47,10 +48,10 @@ export class ActorManager extends EntityManager {
                 id: DataManager.Instance.myPlayerId,
                 type: InputTypeEnum.ActorMove,
                 direction: {
-                    x,
-                    y
+                    x: toFixed(x),
+                    y: toFixed(y)
                 },
-                dt,
+                dt: toFixed(dt),
             })
         } else {
             this.state = EntityStateEnum.Idle

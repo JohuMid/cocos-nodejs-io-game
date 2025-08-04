@@ -1,4 +1,4 @@
-import { ApiMsgEnum, EntityTypeEnum, IClientInput, IMsgClientSync, InputTypeEnum, IState } from "../Common"
+import { ApiMsgEnum, EntityTypeEnum, IClientInput, IMsgClientSync, InputTypeEnum, IState, toFixed } from "../Common"
 import { Connection } from "../Core"
 import { Player } from "./Player"
 import { PlayerManager } from "./PlayerManager"
@@ -84,7 +84,7 @@ export class Room {
         }, 100)
 
         const timer2 = setInterval(() => {
-            this.timePass()
+            this.timePast()
         }, 16)
     }
 
@@ -105,10 +105,10 @@ export class Room {
         }
     }
 
-    timePass() {
+    timePast() {
         const now = process.uptime()
         const dt = now - (this.lastTime ?? now)
-        this.pendingInput.push({ type: InputTypeEnum.TimePass, dt })
+        this.pendingInput.push({ type: InputTypeEnum.TimePast, dt: toFixed(dt) })
 
         this.lastTime = now
     }

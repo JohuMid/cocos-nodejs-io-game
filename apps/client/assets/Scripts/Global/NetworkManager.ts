@@ -1,6 +1,8 @@
 import { _decorator, resources, Asset, error } from "cc";
 import Singleton from "../Base/Singleton";
-import { IModel } from "../Common";
+import { ApiMsgEnum, IModel } from "../Common";
+import { strencode, strdecode } from "../Common";
+import { binaryEncode, binaryDecode } from "../Common";
 
 interface IItem {
     cb: Function;
@@ -21,7 +23,7 @@ export class NetworkManager extends Singleton {
     isConnected = false
     port = 9876
     ws: WebSocket
-    private map: Map<string, Array<IItem>> = new Map();
+    private map: Map<ApiMsgEnum, Array<IItem>> = new Map();
 
     connect() {
         return new Promise((resolve, reject) => {
@@ -30,6 +32,7 @@ export class NetworkManager extends Singleton {
                 return
             }
             this.ws = new WebSocket(`ws://localhost:${this.port}`)
+            this.ws.binaryType = 'arraybuffer'
             this.ws.onopen = () => {
                 console.log('连接成功')
                 this.isConnected = true
@@ -38,7 +41,7 @@ export class NetworkManager extends Singleton {
             this.ws.onmessage = (event) => {
                 console.log('收到服务器消息', event.data)
                 try {
-                    const json = JSON.parse(event.data)
+                    const json = binaryDecode(event.data)
                     const { name, data } = json
                     if (this.map.has(name)) {
                         this.map.get(name).forEach(({ cb, ctx }) => {
@@ -87,9 +90,8 @@ export class NetworkManager extends Singleton {
             name,
             data
         }
-
-        await new Promise(resolve => setTimeout(resolve, 2000))
-        this.ws.send(JSON.stringify(msg))
+        const da = binaryEncode(name, data)
+        this.ws.send(da.buffer)
     }
 
     listenMsg<T extends keyof IModel["msg"]>(name: T, cb: (args: IModel["msg"][T]) => void, ctx: unknown) {

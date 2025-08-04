@@ -6,6 +6,7 @@ import { EntityManager } from '../../Base/EntityManager';
 import { IActor } from '../../Common';
 import { WeaponStateMachine } from './WeaponStateMachine';
 import EventManager from '../../Global/EventManager';
+import { toFixed } from '../../Common/Utils';
 
 const { ccclass, property } = _decorator;
 
@@ -54,12 +55,12 @@ export class WeaponManager extends EntityManager {
             type: InputTypeEnum.WeaponShoot,
             owner: this.owner,
             position: {
-                x: pointStagePos.x,
-                y: pointStagePos.y,
+                x: toFixed(pointStagePos.x),
+                y: toFixed(pointStagePos.y),
             },
             direction: {
-                x: direction.x,
-                y: direction.y,
+                x: toFixed(direction.x),
+                y: toFixed(direction.y),
             }
         })
         console.log(DataManager.Instance.state.bullets);

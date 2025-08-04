@@ -97,7 +97,7 @@ export class BattleManager extends Component {
         this.tickActor(dt)
         // DataManager.Instance.applyInput(
         //     {
-        //         type: InputTypeEnum.TimePass,
+        //         type: InputTypeEnum.TimePast,
         //         dt,
         //     }
         // )

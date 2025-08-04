@@ -1,7 +1,8 @@
 import { WebSocket } from "ws";
 import { MyServer } from "./MyServer";
 import { EventEmitter } from "stream";
-import { IModel } from "../Common";
+import { ApiMsgEnum, binaryDecode, binaryEncode, IModel, strdecode, strencode } from "../Common";
+import { buffer2Bufer } from "../Utils";
 
 interface IItem {
     cb: Function;
@@ -10,7 +11,7 @@ interface IItem {
 
 export class Connection extends EventEmitter {
 
-    private msgMap: Map<string, Array<IItem>> = new Map();
+    private msgMap: Map<ApiMsgEnum, Array<IItem>> = new Map();
 
     constructor(private server: MyServer, private ws: WebSocket) {
         super()
@@ -20,11 +21,10 @@ export class Connection extends EventEmitter {
             this.emit('close')
         })
 
-        this.ws.on('message', (buffer) => {
-            const str = buffer.toString()
+        this.ws.on('message', (buffer: Buffer) => {
             try {
-                const msg = JSON.parse(str)
-                const { name, data } = msg
+                const json = binaryDecode(buffer2Bufer(buffer))
+                const { name, data } = json
                 if (this.server.apiMap.has(name)) {
                     try {
                         const cb = this.server.apiMap.get(name)
@@ -51,7 +51,7 @@ export class Connection extends EventEmitter {
                     }
                 }
             } catch (error) {
-                console.log('消息格式错误', str)
+                console.log('消息格式错误', error)
             }
         })
     }
@@ -61,7 +61,10 @@ export class Connection extends EventEmitter {
             name,
             data
         }
-        this.ws.send(JSON.stringify(msg))
+
+        const da = binaryEncode(name, data)
+        const buffer = Buffer.from(da.buffer)
+        this.ws.send(buffer)
     }
 
     listenMsg<T extends keyof IModel["msg"]>(name: T, cb: (connection: Connection, args: IModel["msg"][T]) => void, ctx: unknown) {
