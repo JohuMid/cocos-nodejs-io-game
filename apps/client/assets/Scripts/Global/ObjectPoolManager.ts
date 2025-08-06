@@ -1,43 +1,55 @@
-import { _decorator, resources, Asset, Node, instantiate } from "cc";
 import Singleton from "../Base/Singleton";
-import { EntityTypeEnum } from "../Common";
+import { instantiate, Node } from "cc";
 import DataManager from "./DataManager";
+import { EntityTypeEnum } from "../Common";
 
-export class ObjectPoolManager extends Singleton {
+export default class ObjectPoolManager extends Singleton {
     static get Instance() {
         return super.GetInstance<ObjectPoolManager>();
     }
 
-    private objectPool: Node
-    private map: Map<EntityTypeEnum, Node[]> = new Map()
+    private objectPool: Node = null;
+    private map: Map<EntityTypeEnum, Node[]> = new Map();
 
-    get(type: EntityTypeEnum) {
-        if (!this.objectPool) {
-            this.objectPool = new Node("ObjectPool")
-            this.objectPool.setParent(DataManager.Instance.stage)
-        }
-        if (!this.map.has(type)) {
-            this.map.set(type, [])
-            const container = new Node(type + 'Pool')
-            container.setParent(this.objectPool)
-        }
-
-        const nodes = this.map.get(type)
-        let node: Node
-        if (!nodes.length) {
-            const prefab = DataManager.Instance.prefabMap.get(type)
-            node = instantiate(prefab)
-            node.name = type
-            node.setParent(this.objectPool.getChildByName(type + 'Pool'))
-        } else {
-            node = nodes.pop()
-        }
-        node.active = true
-        return node
+    private getContainerName(objectName: EntityTypeEnum) {
+        return objectName + "Pool";
     }
 
-    ret(node: Node) {
-        node.active = false
-        this.map.get(node.name as EntityTypeEnum).push(node)
+    reset() {
+        this.objectPool = null;
+        this.map.clear();
+    }
+
+    get(objectName: EntityTypeEnum) {
+        if (this.objectPool === null) {
+            this.objectPool = new Node("ObjectPool");
+            this.objectPool.setParent(DataManager.Instance.stage);
+        }
+
+        if (!this.map.has(objectName)) {
+            this.map.set(objectName, []);
+            const container = new Node(this.getContainerName(objectName));
+            container.setParent(this.objectPool);
+        }
+
+        let node: Node;
+        const nodes = this.map.get(objectName);
+
+        if (!nodes.length) {
+            const prefab = DataManager.Instance.prefabMap.get(objectName);
+            node = instantiate(prefab);
+            node.name = objectName;
+            node.setParent(this.objectPool.getChildByName(this.getContainerName(objectName)));
+        } else {
+            node = nodes.pop();
+        }
+        node.active = true;
+        return node;
+    }
+
+    ret(object: Node) {
+        object.active = false;
+        const objectName = object.name as EntityTypeEnum;
+        this.map.get(objectName).push(object);
     }
 }

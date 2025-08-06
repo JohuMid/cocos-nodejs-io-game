@@ -6,10 +6,10 @@ import { ActorManager } from '../Entity/Actor/ActorManager';
 import { EventEnum, PrefabPathEnum, TexturePathEnum } from '../Enum';
 import { ApiMsgEnum, EntityTypeEnum, IClientInput, IMsgClientSync, IMsgServerSync, InputTypeEnum } from '../Common';
 import { BulletManager } from '../Entity/Bullet/BulletManager';
-import { ObjectPoolManager } from '../Global/ObjectPoolManager';
 import { NetworkManager } from '../Global/NetworkManager';
 import EventManager from '../Global/EventManager';
 import { deepClone } from '../Utils';
+import ObjectPoolManager from '../Global/ObjectPoolManager';
 const { ccclass, property } = _decorator;
 
 @ccclass('BattleManager')
@@ -133,6 +133,7 @@ export class BattleManager extends Component {
             let bm = DataManager.Instance.bulletMap.get(id)
             if (!bm) {
                 const bullet = ObjectPoolManager.Instance.get(type)
+                if (!bullet || !bullet.isValid) continue
                 bm = bullet.getComponent(BulletManager) || bullet.addComponent(BulletManager)
                 DataManager.Instance.bulletMap.set(data.id, bm)
                 bm.init(data)
