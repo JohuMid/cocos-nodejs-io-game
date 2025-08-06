@@ -49,6 +49,34 @@ export class Room {
     }
 
     start() {
+        const createPos = (index) => {
+            if (index === 0) {
+                return {
+                    x: -220,
+                    y: 220,
+                }
+            } else if (index === 1) {
+                return {
+                    x: 220,
+                    y: 220,
+                }
+            } else if (index === 2) {
+                return {
+                    x: 220,
+                    y: -220,
+                }
+            } else if (index === 3) {
+                return {
+                    x: -220,
+                    y: -220,
+                }
+            }
+            return {
+                x: 0,
+                y: 0,
+            }
+        }
+
         const state: IState = {
             actors: [...this.players].map((player, index) => (
                 {
@@ -58,11 +86,8 @@ export class Room {
                     type: EntityTypeEnum.Actor1,
                     weaponType: EntityTypeEnum.Weapon1,
                     bulletType: EntityTypeEnum.Bullet2,
-                    position: {
-                        x: -150 + index * 300,
-                        y: -150 + index * 300,
-
-                    },
+                    //四个玩家分布在四个角
+                    position: createPos(index),
                     direction: {
                         x: 1,
                         y: 0,

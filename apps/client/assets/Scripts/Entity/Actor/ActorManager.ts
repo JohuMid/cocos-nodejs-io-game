@@ -1,4 +1,4 @@
-import { _decorator, Component, EventTouch, input, Input, instantiate, log, Node, ProgressBar, tween, Tween, UITransform, Vec2, Vec3 } from 'cc';
+import { _decorator, Component, EventTouch, input, Input, instantiate, Label, log, Node, ProgressBar, tween, Tween, UITransform, Vec2, Vec3 } from 'cc';
 import DataManager from '../../Global/DataManager';
 import { EntityTypeEnum, InputTypeEnum } from '../../Common/Enum';
 import { IActor } from '../../Common';
@@ -17,11 +17,13 @@ export class ActorManager extends EntityManager {
     id: number
 
     private hp: ProgressBar
+    private actorName: Label
     private targetPos: Vec3
     private tw: Tween<Node>
     private wm: WeaponManager
     init(data: IActor) {
         this.hp = this.node.getComponentInChildren(ProgressBar)
+        this.actorName = this.node.getComponentInChildren(Label)
         this.id = data.id
         this.bulletType = data.bulletType
         this.fsm = this.addComponent(ActorStateMachine)
@@ -59,6 +61,7 @@ export class ActorManager extends EntityManager {
     }
 
     render(data: IActor) {
+        this.renderActorName(data)
         this.renderHp(data)
         this.renderDire(data)
         this.renderPosition(data)
@@ -90,6 +93,7 @@ export class ActorManager extends EntityManager {
         if (x !== 0) {
             this.node.setScale(x > 0 ? 1 : -1, 1);
             this.hp.node.setScale(x > 0 ? 1 : -1, 1);
+            this.actorName.node.setScale(x > 0 ? 1 : -1, 1);
         }
         const side = Math.sqrt(x * x + y * y);
         const angle = rad2Angle(Math.asin(y / side));
@@ -98,6 +102,10 @@ export class ActorManager extends EntityManager {
 
     renderHp(data: IActor) {
         this.hp.progress = data.hp / this.hp.totalLength
+    }
+
+    renderActorName(data: IActor) {
+        this.actorName.string = data.nickname
     }
 }
 

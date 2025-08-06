@@ -6,6 +6,7 @@ export interface IVec2 {
 }
 
 export interface IActor {
+    nickname: string,
     id: number,
     hp:number,
     position: IVec2,

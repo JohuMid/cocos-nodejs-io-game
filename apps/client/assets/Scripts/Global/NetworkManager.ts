@@ -1,8 +1,8 @@
 import { _decorator, resources, Asset, error } from "cc";
 import Singleton from "../Base/Singleton";
 import { ApiMsgEnum, IModel } from "../Common";
-import { strencode, strdecode } from "../Common";
 import { binaryEncode, binaryDecode } from "../Common";
+import { ToastManager } from "./ToastManager";
 
 interface IItem {
     cb: Function;
@@ -42,9 +42,14 @@ export class NetworkManager extends Singleton {
                 try {
                     const json = binaryDecode(event.data);
                     const { name, data } = json;
+                    // 处理错误
+                    if (data.success === false) {
+                        // error(data.error)
+                        console.log("onmessage:", name, data);
+                        ToastManager.Instance.showToast(data.error);
+                    }
                     try {
                         if (this.map.has(name) && this.map.get(name) && this.map.get(name).length) {
-                            console.log(json);
                             this.map.get(name).forEach(({ cb, ctx }) => cb.call(ctx, data));
                         }
                     } catch (error) {

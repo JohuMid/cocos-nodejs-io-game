@@ -3,6 +3,7 @@ import DataManager from '../Global/DataManager';
 import { SceneEnum } from '../Enum';
 import { ApiMsgEnum } from '../Common';
 import { NetworkManager } from '../Global/NetworkManager';
+import { ToastManager } from '../Global/ToastManager';
 const { ccclass, property } = _decorator;
 
 @ccclass('LoginManager')
@@ -10,6 +11,7 @@ export class LoginManager extends Component {
     input: EditBox
     onLoad() {
         this.input = this.getComponentInChildren(EditBox)
+        ToastManager.Instance.init();
         director.preloadScene(SceneEnum.Hail)
     }
 

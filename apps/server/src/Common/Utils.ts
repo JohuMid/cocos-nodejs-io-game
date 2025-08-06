@@ -52,3 +52,5 @@ export const strdecode = (bytes: Uint8Array) => {
     }
     return String.fromCharCode.apply(null, array);
 };
+
+export const MAX_PLAYER_COUNT = 4

@@ -7,7 +7,7 @@ const { ccclass, property } = _decorator;
 export class PlayerManager extends Component {
     init({ id, rid, nickname }: IPlayer) {
         const label = this.getComponent(Label)
-        label.string = nickname
+        label.string = `${nickname}${rid?`(房间${rid})`:''}`
         this.node.active = true
     }
 }
