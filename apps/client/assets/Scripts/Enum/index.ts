@@ -7,6 +7,7 @@ export enum ParamsNameEnum {
   Idle = "Idle",
   Run = "Run",
   Attack = "Attack",
+  Dead = "Dead",
 }
 
 export enum EventEnum {
@@ -15,6 +16,7 @@ export enum EventEnum {
   BullectBorn = "BullectBorn",
   ClientSync = "ClientSync",
   RoomJoin = "RoomJoin",
+  ActorDead = "ActorDead",
 }
 
 
@@ -30,6 +32,7 @@ export enum PrefabPathEnum {
 export enum TexturePathEnum {
   Actor1Idle = 'texture/actor/actor1/idle',
   Actor1Run = 'texture/actor/actor1/run',
+  Actor1Dead = 'texture/actor/actor1/dead',
   Weapon1Idle = 'texture/weapon/weapon1/idle',
   Weapon1Attack = 'texture/weapon/weapon1/attack',
   Bullet2Idle = 'texture/bullet/bullet2',
@@ -40,6 +43,7 @@ export enum EntityStateEnum {
   Idle = "Idle",
   Run = "Run",
   Attack = "Attack",
+  Dead = "Dead",
 }
 
 export enum SceneEnum {

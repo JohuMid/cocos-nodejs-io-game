@@ -38,6 +38,14 @@ export class ActorManager extends EntityManager {
         weapon.setParent(this.node)
         this.wm = weapon.addComponent(WeaponManager)
         this.wm.init(data)
+
+        EventManager.Instance.on(EventEnum.ActorDead, this.onActorDead, this)
+    }
+
+    onActorDead(id: number) {
+        if (id === this.id) {
+            this.state = EntityStateEnum.Dead
+        }
     }
 
     tick(dt: number): void {

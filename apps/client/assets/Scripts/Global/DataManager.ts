@@ -117,6 +117,10 @@ export default class DataManager extends Singleton {
               this.state.seed = random
               const damage = random / 233280 >= 0.5 ? BULLET_DAMAGE * 2 : BULLET_DAMAGE
               actor.hp -= damage
+              if (actor.hp <= 0) {
+                EventManager.Instance.emit(EventEnum.ActorDead, actor.id)
+              }
+
               EventManager.Instance.emit(EventEnum.ExplosionBorn, bullet.id, {
                 x: toFixed((actor.position.x + bullet.position.x) / 2),
                 y: toFixed((actor.position.y + bullet.position.y) / 2),
