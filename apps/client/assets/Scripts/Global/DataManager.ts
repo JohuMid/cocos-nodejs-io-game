@@ -119,7 +119,7 @@ export default class DataManager extends Singleton {
           const bullet = bullets[i];
           for (let j = actors.length - 1; j >= 0; j--) {
             const actor = actors[j];
-            if ((actor.position.x - bullet.position.x) ** 2 + (actor.position.y - bullet.position.y) ** 2 < (ACTOR_RADIUS + BULLET_RADIUS) ** 2) {
+            if ((actor.position.x - bullet.position.x) ** 2 + (actor.position.y - bullet.position.y) ** 2 < (ACTOR_RADIUS + BULLET_RADIUS) ** 2 && actor.hp > 0) {
               const random = randomBySeed(this.state.seed)
               this.state.seed = random
               const damage = random / 233280 >= 0.5 ? BULLET_DAMAGE * 2 : BULLET_DAMAGE

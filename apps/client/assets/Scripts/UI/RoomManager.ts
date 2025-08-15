@@ -1,5 +1,5 @@
 import { _decorator, Component, Label, Node } from 'cc';
-import { IRoom } from '../Common';
+import { IRoom, RoomStateEnum } from '../Common';
 import { EventEnum } from '../Enum';
 import EventManager from '../Global/EventManager';
 
@@ -9,10 +9,10 @@ import { MAX_PLAYER_COUNT } from '../Common';
 @ccclass('RoomManager')
 export class RoomManager extends Component {
     id: number
-    init({ id, players }: IRoom) {
+    init({ id, state, players }: IRoom) {
         this.id = id
         const label = this.getComponent(Label)
-        label.string = `房间${id}(${players.length}/${MAX_PLAYER_COUNT}):${players.map(p => p.nickname).join(',')}`
+        label.string = `房间${id}(${players.length}/${MAX_PLAYER_COUNT})(${state === RoomStateEnum.Gameing ? '游戏中' : '等待中'}):${players.map(p => p.nickname).join(',')}`
 
         this.node.active = true
     }

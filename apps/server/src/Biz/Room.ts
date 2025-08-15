@@ -1,4 +1,4 @@
-import { ApiMsgEnum, EntityTypeEnum, IClientInput, IMsgClientSync, InputTypeEnum, IState, toFixed } from "../Common"
+import { ApiMsgEnum, EntityTypeEnum, IClientInput, IMsgClientSync, InputTypeEnum, IState, RoomStateEnum, toFixed } from "../Common"
 import { Connection } from "../Core"
 import { Player } from "./Player"
 import { PlayerManager } from "./PlayerManager"
@@ -10,6 +10,8 @@ export class Room {
 
     pendingInput: IClientInput[] = []
     lastPlayerFrameIdMap: Map<number, number> = new Map()
+
+    state: RoomStateEnum = RoomStateEnum.Wait
 
     lastTime: number
 

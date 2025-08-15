@@ -29,3 +29,8 @@ export enum ApiMsgEnum {
     ApiGameStart,
     MsgGameStart,
 }
+
+export enum RoomStateEnum {
+    Wait,
+    Gameing,
+}

@@ -1,5 +1,5 @@
 import Singleton from "../Base/Singleton";
-import { ApiMsgEnum } from "../Common";
+import { ApiMsgEnum, RoomStateEnum } from "../Common";
 import { PlayerManager } from "./PlayerManager";
 import { Room } from "./Room";
 import { MAX_PLAYER_COUNT } from "../Common";
@@ -23,6 +23,9 @@ export class RoomManager extends Singleton {
 
     joinRoom(rid: number, uid: number) {
         const room = this.idMapRoom.get(rid)
+        if (room.state === RoomStateEnum.Gameing) {
+            throw new Error('房间已开始游戏')
+        }
         if (room.players.size >= MAX_PLAYER_COUNT) {
 
             throw new Error('房间已满')
@@ -86,9 +89,10 @@ export class RoomManager extends Singleton {
         return [...rooms].map(p => this.getRoomView(p))
     }
 
-    getRoomView({ id, players }: Room) {
+    getRoomView({ id, state, players }: Room) {
         return {
             id,
+            state,
             players: PlayerManager.Instance.getPlayersView(players)
         }
     }

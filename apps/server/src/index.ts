@@ -1,6 +1,6 @@
 import { PlayerManager } from "./Biz/PlayerManager";
 import { RoomManager } from "./Biz/RoomManager";
-import { ApiMsgEnum, IApiGameStartReq, IApiGameStartRes, IApiPlayerJoinReq, IApiPlayerJoinRes, IApiPlayerListReq, IApiPlayerListRes, IApiRoomCreateReq, IApiRoomCreateRes, IApiRoomJoinReq, IApiRoomJoinRes, IApiRoomLeaveReq, IApiRoomLeaveRes, IApiRoomListReq, IApiRoomListRes } from "./Common";
+import { ApiMsgEnum, IApiGameStartReq, IApiGameStartRes, IApiPlayerJoinReq, IApiPlayerJoinRes, IApiPlayerListReq, IApiPlayerListRes, IApiRoomCreateReq, IApiRoomCreateRes, IApiRoomJoinReq, IApiRoomJoinRes, IApiRoomLeaveReq, IApiRoomLeaveRes, IApiRoomListReq, IApiRoomListRes, RoomStateEnum } from "./Common";
 import { Connection, MyServer } from "./Core";
 import { symlinkCommon } from "./Utils";
 
@@ -128,11 +128,21 @@ server.setApi(ApiMsgEnum.ApiGameStart, (connection: Connection, data: IApiGameSt
     if (connection.playerId) {
         const player = PlayerManager.Instance.idMapPlayer.get(connection.playerId)
         if (player) {
+            // 房间人数大于1才能开始游戏
+            const room = RoomManager.Instance.idMapRoom.get(player.rid)
+            if (room) {
+                if (room.players.size <= 1) {
+                    throw new Error('房间人数不足')
+                }
+            }
+
             const rid = player.rid
 
             if (rid) {
                 RoomManager.Instance.startGame(rid)
                 PlayerManager.Instance.syncPlayers()
+                // 将房间的状态设置为游戏中
+                RoomManager.Instance.idMapRoom.get(rid).state = RoomStateEnum.Gameing
                 RoomManager.Instance.syncRooms()
                 RoomManager.Instance.syncRoom(rid)
                 return {}

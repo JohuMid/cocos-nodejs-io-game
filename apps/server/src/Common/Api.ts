@@ -1,3 +1,5 @@
+import { RoomStateEnum } from "./Enum"
+
 export interface IPlayer {
     id: number,
     nickname: string,
@@ -6,6 +8,7 @@ export interface IPlayer {
 
 export interface IRoom {
     id: number,
+    state: RoomStateEnum,
     players: IPlayer[]
 }
 
