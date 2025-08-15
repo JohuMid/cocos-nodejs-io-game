@@ -25,6 +25,11 @@ const encodeWeaponShoot = (input: any, view: DataView, index: number) => {
     index += 4
 }
 
+const encodeActorDead = (input: any, view: DataView, index: number) => {
+    view.setUint8(index++, input.type)
+    view.setUint8(index++, input.id)
+}
+
 export const encodeTimePast = (input: any, view: DataView, index: number) => {
     view.setUint8(index++, input.type)
     view.setFloat32(index, input.dt)
@@ -53,6 +58,15 @@ export const binaryEncode = (name: ApiMsgEnum, data: any): DataView => {
             index += 4
             encodeWeaponShoot(input, view, index)
             return view
+        } else if (input.type === InputTypeEnum.ActorDead) {
+            let index = 0
+            const ab = new ArrayBuffer(1 + 4 + 2)
+            const view = new DataView(ab)
+            view.setUint8(index++, name)
+            view.setUint32(index, frameId)
+            index += 4
+            encodeActorDead(input, view, index)
+            return view
         } else {
             let index = 0
             const ab = new ArrayBuffer(1 + 4 + 5)
@@ -71,6 +85,8 @@ export const binaryEncode = (name: ApiMsgEnum, data: any): DataView => {
                 total += 14
             } else if (input.type === InputTypeEnum.WeaponShoot) {
                 total += 18
+            } else if (input.type === InputTypeEnum.ActorDead) {
+                total += 2
             } else {
                 total += 5
             }
@@ -90,6 +106,9 @@ export const binaryEncode = (name: ApiMsgEnum, data: any): DataView => {
             } else if (input.type === InputTypeEnum.WeaponShoot) {
                 encodeWeaponShoot(input, view, index)
                 index += 18
+            } else if (input.type === InputTypeEnum.ActorDead) {
+                encodeActorDead(input, view, index)
+                index += 2
             } else {
                 encodeTimePast(input, view, index)
                 index += 5
@@ -156,6 +175,15 @@ const decodeWeaponShoot = (view: DataView, index: number) => {
     return input
 }
 
+const decodeActorDead = (view: DataView, index: number) => {
+    const id = view.getUint8(index++)
+    const input = {
+        type: InputTypeEnum.ActorDead,
+        id,
+    }
+    return input
+}
+
 const decodeTimePast = (view: DataView, index: number) => {
     const dt = toFixed(view.getFloat32(index))
     index += 4
@@ -193,8 +221,8 @@ export const binaryDecode = (buffer: ArrayBuffer) => {
                     input
                 }
             }
-        } else {
-            const input = decodeTimePast(view, index)
+        } else if (inputType === InputTypeEnum.ActorDead) {
+            const input = decodeActorDead(view, index)
             return {
                 name,
                 data: {
@@ -216,6 +244,9 @@ export const binaryDecode = (buffer: ArrayBuffer) => {
             } else if (inputType === InputTypeEnum.WeaponShoot) {
                 inputs.push(decodeWeaponShoot(view, index))
                 index += 17
+            } else if (inputType === InputTypeEnum.ActorDead) {
+                inputs.push(decodeActorDead(view, index))
+                index += 1
             } else {
                 inputs.push(decodeTimePast(view, index))
                 index += 4

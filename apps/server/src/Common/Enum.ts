@@ -2,6 +2,7 @@ export enum InputTypeEnum {
     ActorMove,
     WeaponShoot,
     TimePast,
+    ActorDead,
 }
 
 export enum EntityTypeEnum {

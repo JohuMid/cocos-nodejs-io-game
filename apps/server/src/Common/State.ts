@@ -36,7 +36,7 @@ export interface ITimePast{
     dt:number,
 }
 
-export type IClientInput = IActorMove | IWeaponShoot | ITimePast
+export type IClientInput = IActorMove | IWeaponShoot | ITimePast | IActorDead
 
 export interface IActorMove {
     id: number,
@@ -50,4 +50,9 @@ export interface IWeaponShoot {
     type: InputTypeEnum.WeaponShoot,
     position: IVec2,
     direction: IVec2,
+}
+
+export interface IActorDead {
+    id: number,
+    type: InputTypeEnum.ActorDead,
 }

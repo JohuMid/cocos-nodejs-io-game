@@ -52,6 +52,20 @@ export class ActorManager extends EntityManager {
         if (this.id !== DataManager.Instance.myPlayerId) {
             return
         }
+        if (this.hp.progress <= 0 && this.hp.progress != -100) {
+            EventManager.Instance.emit(EventEnum.ClientSync, {
+                id: this.id,
+                type: InputTypeEnum.ActorDead,
+            })
+            // 找到id相同的玩家将hp设为-100
+            DataManager.Instance.state.actors = DataManager.Instance.state.actors.map((actor) => {
+                if (actor.id === this.id) {
+                    actor.hp = -100
+                }
+                return actor
+            })
+            return
+        }
         if (DataManager.Instance.jm.input.length()) {
             const { x, y } = DataManager.Instance.jm.input
             EventManager.Instance.emit(EventEnum.ClientSync, {

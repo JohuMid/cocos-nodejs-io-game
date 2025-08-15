@@ -40,6 +40,9 @@ export class WeaponManager extends EntityManager {
         if (this.owner !== DataManager.Instance.myPlayerId) {
             return
         }
+        if (DataManager.Instance.state.actors.find((actor) => actor.id === this.owner).hp <= 0) {
+            return
+        }
         const pointWorldPos = this.point.getWorldPosition();
         const pointStagePos = DataManager.Instance.stage
             .getComponent(UITransform)
