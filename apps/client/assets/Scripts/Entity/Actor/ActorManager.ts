@@ -21,6 +21,8 @@ export class ActorManager extends EntityManager {
     private targetPos: Vec3
     private tw: Tween<Node>
     private wm: WeaponManager
+    private isDead: boolean = false
+
     init(data: IActor) {
         this.hp = this.node.getComponentInChildren(ProgressBar)
         this.actorName = this.node.getComponentInChildren(Label)
@@ -42,31 +44,37 @@ export class ActorManager extends EntityManager {
         EventManager.Instance.on(EventEnum.ActorDead, this.onActorDead, this)
     }
 
+    onDestroy() {
+        EventManager.Instance.off(EventEnum.ActorDead, this.onActorDead, this)
+    }
+
     onActorDead(id: number) {
-        if (id === this.id) {
-            this.state = EntityStateEnum.Dead
+        console.log('this.id  id', this.id, id );
+        
+        if (id !== this.id) {
+            return
         }
+        console.log('玩家死亡');
+        this.state = EntityStateEnum.Dead
     }
 
     tick(dt: number): void {
         if (this.id !== DataManager.Instance.myPlayerId) {
             return
         }
-        if (this.hp.progress <= 0 && this.hp.progress != -100) {
+        
+        if (this.hp.progress <= 0 && !this.isDead) {
+            this.isDead = true
+            // progress设为0
+            this.hp.progress = 0
+
             EventManager.Instance.emit(EventEnum.ClientSync, {
                 id: this.id,
                 type: InputTypeEnum.ActorDead,
             })
-            // 找到id相同的玩家将hp设为-100
-            DataManager.Instance.state.actors = DataManager.Instance.state.actors.map((actor) => {
-                if (actor.id === this.id) {
-                    actor.hp = -100
-                }
-                return actor
-            })
             return
         }
-        if (DataManager.Instance.jm.input.length()) {
+        if (DataManager.Instance.jm.input.length() && !this.isDead) {
             const { x, y } = DataManager.Instance.jm.input
             EventManager.Instance.emit(EventEnum.ClientSync, {
                 id: DataManager.Instance.myPlayerId,
@@ -123,7 +131,8 @@ export class ActorManager extends EntityManager {
     }
 
     renderHp(data: IActor) {
-        this.hp.progress = data.hp / this.hp.totalLength
+        // 确保血量进度不会小于0
+        this.hp.progress = Math.max(0, data.hp / this.hp.totalLength)
     }
 
     renderActorName(data: IActor) {

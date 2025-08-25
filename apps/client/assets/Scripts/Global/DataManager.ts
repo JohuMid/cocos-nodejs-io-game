@@ -107,7 +107,6 @@ export default class DataManager extends Singleton {
       case InputTypeEnum.ActorDead: {
         const { id } = input
         EventManager.Instance.emit(EventEnum.ActorDead, id)
-
         break
       }
 

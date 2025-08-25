@@ -3,8 +3,9 @@ import { ApiMsgEnum, IMsgRoom } from '../Common';
 import { NetworkManager } from '../Global/NetworkManager';
 import { PlayerManager } from '../UI/PlayerManager';
 import DataManager from '../Global/DataManager';
-import { SceneEnum } from '../Enum';
+import { EntityStateEnum, EventEnum, SceneEnum } from '../Enum';
 import { deepClone } from '../Utils';
+import EventManager from '../Global/EventManager';
 const { ccclass, property } = _decorator;
 
 @ccclass('RoomManager')

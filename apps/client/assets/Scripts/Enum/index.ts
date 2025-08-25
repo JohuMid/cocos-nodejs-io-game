@@ -27,6 +27,7 @@ export enum PrefabPathEnum {
   Bullet2 = 'prefab/Bullet2',
   Explosion = 'prefab/Explosion',
   Toast = 'prefab/Toast',
+  Mask = 'prefab/Mask',
 }
 
 export enum TexturePathEnum {

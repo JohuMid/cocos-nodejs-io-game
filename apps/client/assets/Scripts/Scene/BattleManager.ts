@@ -1,4 +1,4 @@
-import { _decorator, Component, EventTouch, input, Input, instantiate, LabelShadow, log, Node, Prefab, SpriteFrame, UITransform, Vec2 } from 'cc';
+import { _decorator, Component, EventTouch, find, input, Input, instantiate, LabelShadow, log, Node, Prefab, SpriteFrame, UITransform, Vec2 } from 'cc';
 import DataManager from '../Global/DataManager';
 import { JoyStickManager } from '../UI/JoyStickManager';
 import { ResourceManager } from '../Global/ResourceManager';
@@ -10,6 +10,7 @@ import { NetworkManager } from '../Global/NetworkManager';
 import EventManager from '../Global/EventManager';
 import { deepClone } from '../Utils';
 import ObjectPoolManager from '../Global/ObjectPoolManager';
+import { GameOverManager } from '../Global/GameOverManager';
 const { ccclass, property } = _decorator;
 
 @ccclass('BattleManager')
@@ -24,6 +25,7 @@ export class BattleManager extends Component {
 
     async start() {
         this.clearGame()
+        GameOverManager.Instance.init();
         await Promise.all([
             this.loadRes(),
             this.connectServer(),
@@ -154,6 +156,9 @@ export class BattleManager extends Component {
             DataManager.Instance.applyInput(input)
             this.pendingMsg.push(msg)
         }
+        if (input.type === InputTypeEnum.ActorDead) {
+            this.handleGameOver(input.id)
+        }
     }
 
     handleServerSync({ lastFrameId, inputs }: IMsgServerSync) {
@@ -167,6 +172,14 @@ export class BattleManager extends Component {
         this.pendingMsg = this.pendingMsg.filter((msg) => msg.frameId > lastFrameId)
         for (const msg of this.pendingMsg) {
             DataManager.Instance.applyInput(msg.input)
+        }
+    }
+
+    handleGameOver(id: number) {
+        // 只有当前玩家死亡时才显示游戏结束界面
+        if (id === DataManager.Instance.myPlayerId) {
+            console.log('游戏结束');
+            GameOverManager.Instance.showGameOver()
         }
     }
 }

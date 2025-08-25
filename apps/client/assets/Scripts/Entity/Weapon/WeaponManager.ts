@@ -66,13 +66,16 @@ export class WeaponManager extends EntityManager {
                 y: toFixed(direction.y),
             }
         })
-        console.log(DataManager.Instance.state.bullets);
     }
 
     handleBullectBorn(owner: number) {
+        console.log('this.owner owner', this.owner, owner);
+        
         if (owner !== this.owner) {
             return
         }
+        console.log('武器发射');
+        
         this.state = EntityStateEnum.Attack
     }
 }
